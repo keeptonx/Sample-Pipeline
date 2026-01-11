@@ -1,0 +1,31 @@
+pipeline
+{
+agent any
+environement {
+DEPLOY_USER="ec2-user"
+DEPLOY_PASSWORD=
+DEPLOY_PROD_IP="x.x.x.x"
+DEPLOY_PROD_PATH="/var/www/html"
+DEPLOY_DEV_IP=""
+DEPLOY_DEV_PATH=""
+}
+stages
+{
+stage 
+ ('checkout')
+{
+steps 
+{
+git clone
+}
+}
+stage('deploy') {
+steps {
+sh  '''
+
+scp -i credentials('ck_deploy_pass') * ec2user@nginixipx.x.x.xx:/var/www/html
+
+'''
+}
+}
+}
