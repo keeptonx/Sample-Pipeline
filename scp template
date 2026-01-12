@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    stages {
+        stage ('Git Clone'){
+            steps {
+
+            }
+        }
+    stage('deploy') {
+        steops {
+            sh '''
+            scp credentials('credtialssetinjenkins') * ec2user@nginxipx.x.x.x.x:/var/www/html
+                '''
+        }
+    }
+    }
+}
