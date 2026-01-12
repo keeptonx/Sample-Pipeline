@@ -22,9 +22,7 @@ git clone
 stage('deploy') {
 steps {
 sh  '''
-
-scp -i credentials('ck_deploy_pass') * ec2user@nginixipx.x.x.xx:/var/www/html
-
+scp -i credentials $DEPLOY_PASSWORD * $DEPLOY_USER@$DEPLOY_PROD_IP:DEPLOY_PROD_PATH
 '''
 }
 }
