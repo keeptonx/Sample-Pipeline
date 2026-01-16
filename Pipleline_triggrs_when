@@ -65,3 +65,70 @@ scp -i credentials $DEPLOY_PASSWORD * $DEPLOY_USER@$DEPLOY_PROD_IP:DEPLOY_PROD_P
     }
 }
 }
+
+
+// Jenkins pipeline script with 'when' condition to trigger deployment only on 'dev' branch
+// Lec 22nd June Sun 2025
+pipeline
+{
+agent any
+// To run as cron job but Parameterized builds are not supported with cron jobs
+//  triggers {
+//  cron('H 2 * * *') // Runevery day at 2 AM
+//  }
+environement {
+DEPLOY_USER="ec2-user"
+DEPLOY_PASSWORD=
+DEPLOY_PROD_IP="x.x.x.x"
+DEPLOY_PROD_PATH="/var/www/html"
+DEPLOY_DEV_IP=""
+DEPLOY_DEV_PATH=""
+}
+stages
+{
+    stage ('checkout'){
+steps 
+{
+git checkout
+}
+}
+parameters {
+    choice(name: 'ENVIRONMENT', choices: ['dev', 'uat', 'prod'], description: 'Select the environment to deploy')
+}
+    stage('delpoydev') {
+        when {
+            branch 'dev'
+            expression { params.ENVIRONMENT == 'dev' }
+        }
+        }
+        steps {
+            sh  '''
+scp -i credentials $DEPLOY_PASSWORD * $DEPLOY_USER@$DEPLOY_PROD_IP:DEPLOY_PROD_PATH
+        '''
+        }
+    }
+        
+stage('delpoyuat') {
+        when {
+            branch 'uat'
+            expression { params.ENVIRONMENT == 'uat'  } }
+        }
+        steps {
+            sh  '''
+scp -i credentials $DEPLOY_PASSWORD * $DEPLOY_USER@$DEPLOY_PROD_IP:DEPLOY_PROD_PATH
+        '''
+        }
+}
+stage('delpoyprod') {
+        when {
+            branch 'prod'
+            expression { params.ENVIRONMENT == 'prod'
+        }
+        steps {
+            sh  '''
+scp -i credentials $DEPLOY_PASSWORD * $DEPLOY_USER@$DEPLOY_PROD_IP:DEPLOY_PROD_PATH
+        '''
+        }
+    }
+}
+}

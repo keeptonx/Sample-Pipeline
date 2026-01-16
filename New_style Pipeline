@@ -100,4 +100,106 @@ stages {
         }
     }
 }
+//
+
+pipeline {
+agent any
+
+parameters {
+    choice(name: 'ENVIRONMENT', choices: ['dev', 'uat', 'prod'], description: 'Select the environment to deploy')
+}
+environment {
+    REPO_URL="https://github.com/your-repo.git"
+}
+stages {
+    stage('Checkout') {
+        steps {
+     git branch: 'main', url:"${REPO_URL}"
+        }
+    }
+
+    stage('deploy to Dev') {
+        steps {
+            script {
+                switch(params.ENVIRONMENT) {
+                    case 'dev':
+        scp -i credentials $DEPLOY_PASSWORD * $DEPLOY_USER@$DEPLOY_PROD_IP:DEPLOY_PROD_PATH
+break
+                    case 'uat':}
+        scp -i credentials $DEPLOY_PASSWORD * $DEPLOY_USER@$DEPLOY_PROD_IP:DEPLOY_PROD_PATH
+break
+     default:
+      error("Invalid environment selected")             
+            }
+        }
+    }
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Provided by VS Code Jenkins Extension
+
+}
+stages {
+    stage('Checkout') {
+        steps {
+            git url: REPO_URL, branch: 'main'
+        }
+    }
+    
+    stage('Deploy to Dev') {
+        when {
+            branch 'dev'
+            expression { params.ENVIRONMENT == 'dev' }
+        }
+        steps {
+            echo 'Deploying to Development Environment...'
+            // Deployment commands for dev
+        }
+    }
+    
+    stage('Deploy to UAT') {
+        when {
+            branch 'uat'
+            expression { params.ENVIRONMENT == 'uat' }
+        }
+        steps {
+            echo 'Deploying to UAT Environment...'
+            // Deployment commands for uat
+        }
+    }
+    
+    stage('Deploy to Prod') {
+        when {
+            branch 'prod'
+            expression { params.ENVIRONMENT == 'prod' }
+        }
+        steps {
+            echo 'Deploying to Production Environment...'
+            // Deployment commands for prod
+        }
+    }
+}
 }
